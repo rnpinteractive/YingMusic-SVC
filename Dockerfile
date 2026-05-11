@@ -50,3 +50,4 @@ COPY runpod_r2_storage.py /app/r2_storage.py
 
 WORKDIR /app
 CMD ["python", "-u", "handler.py"]
+# Build trigger: 2026-05-11T22:21:36Z
