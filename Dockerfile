@@ -9,12 +9,14 @@ ENV HF_HUB_CACHE=/app/checkpoints/hf_cache
 ENV TORCH_HOME=/app/checkpoints/torch
 ENV PIP_NO_CACHE_DIR=1
 
-# System deps
+# System deps + build tools (necessário pra webrtcvad e outras C extensions)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        python3.10 python3-pip python3.10-venv \
+        python3.10 python3-pip python3.10-venv python3.10-dev \
         git wget curl ca-certificates \
         ffmpeg sox libsox-fmt-all \
         libsndfile1 \
+        build-essential gcc g++ make pkg-config \
+        libportaudio2 portaudio19-dev \
     && ln -sf /usr/bin/python3.10 /usr/bin/python \
     && ln -sf /usr/bin/python3.10 /usr/bin/python3 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
