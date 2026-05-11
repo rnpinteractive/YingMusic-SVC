@@ -87,23 +87,26 @@ def _run_inference(
     if result.returncode != 0:
         raise RuntimeError(f"YingMusic-SVC inference failed:\nSTDOUT: {result.stdout[-2000:]}\nSTDERR: {result.stderr[-2000:]}")
 
-    # Find output file (YingMusic writes to a results/ folder based on expname)
+    # YingMusic salva em ./outputs/{expname}/{tgt}_{src}_{pitch}.wav
+    # (my_inference.py linhas 186 + 343 confirmam o path)
     candidates = []
-    for root, _, files in os.walk("./results"):
-        for f in files:
-            if f.endswith((".wav", ".mp3", ".flac")):
-                fp = os.path.join(root, f)
-                candidates.append((os.path.getmtime(fp), fp))
-    if not candidates:
-        # Try other common output paths
-        for root, _, files in os.walk("./output"):
+    for search_dir in [f"./outputs/{exp_name}", "./outputs", "./results", "./output"]:
+        if not os.path.isdir(search_dir):
+            continue
+        for root, _, files in os.walk(search_dir):
             for f in files:
                 if f.endswith((".wav", ".mp3", ".flac")):
                     fp = os.path.join(root, f)
                     candidates.append((os.path.getmtime(fp), fp))
+        if candidates:
+            break
 
     if not candidates:
-        raise RuntimeError(f"No output audio produced. Stdout: {result.stdout[-500:]}")
+        raise RuntimeError(
+            f"No output audio produced.\n"
+            f"Listed dirs: {os.listdir('.')}\n"
+            f"Stdout tail: {result.stdout[-1000:]}"
+        )
 
     # Pick most recently modified file
     candidates.sort(reverse=True)
