@@ -1,0 +1,10 @@
+checkpoints/
+results/
+output/
+*.pt
+*.ckpt
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.local
